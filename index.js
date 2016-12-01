@@ -1,21 +1,21 @@
 var https = require('https');
+var _ = require('lodash');
 
 var fmip = {
     device: function(apple_id, password, device, callback) {
-
         fmip.devices(apple_id, password, function (error, devices) {
             if (error) {
                 return callback(error);
             } else {
-                devices.forEach(function (item) {
-                    if (item.name === device) {
-                        return callback(null, item);
-                    }
-                });
-                var error = new Error();
-                error.type = "NOTFOUND";
-                error.message = "iCloud device [" + device + "] not found!";
-                return callback(error);
+                var found = _.find(devices, {'name': device})
+                if (found) {
+                    return callback(null, found);
+                } else {
+                    var error = new Error();
+                    error.type = "NOTFOUND";
+                    error.message = "iCloud device [" + device + "] not found!";
+                    return callback(error);
+                }
             }
         });
     },
