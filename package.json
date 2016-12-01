@@ -1,0 +1,27 @@
+{
+  "name": "fmip",
+  "version": "1.0.0",
+  "description": "Get iCloud device info",
+  "main": "index.js",
+  "author": {
+    "name": "Bernd Strebel",
+    "email": "b.strebel@digitec",
+    "url": "http://github.com/bstrebel"
+  },
+  "keywords": [
+    "icloud",
+    "iphone",
+    "find"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bstrebel/fmip.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bstrebel/fmip/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "http": "^1.0.0"
+  }
+}
