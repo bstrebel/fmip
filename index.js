@@ -7,7 +7,7 @@ var fmip = {
             if (error) {
                 return callback(error);
             } else {
-                var found = _.find(devices, {'name': device})
+                var found = _.find(devices, {'name': device});
                 if (found) {
                     return callback(null, found);
                 } else {
