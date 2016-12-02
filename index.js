@@ -24,7 +24,7 @@ var fmip = {
             if (error) {
                 return callback(error);
             } else {
-                callback(null, response.content);
+                return callback(null, response.content);
             }
         });
     },
@@ -52,7 +52,7 @@ var fmip = {
                 error.originalMessage = error.message;
                 error.type = "AUTH";
                 error.message = "iCloud service error [" + apple_id + "]";
-                return callback(error)
+                return callback(error);
             });
             deviceRequest.end();
         });
@@ -60,7 +60,7 @@ var fmip = {
             error.originalMessage = error.message;
             error.type = "CONNECT";
             error.message = "iCloud connect error [" + error.message + "]";
-            return callback(error)
+            return callback(error);
         });
         hostRequest.end();
     }

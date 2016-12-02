@@ -1,6 +1,7 @@
-## fmip: find-my-iphone
+## fmip: find my iphone
 
 Get location information (and more) from an iCloud device without triggering Apple alerts!
+Based on [Thomas Henley's iphone-finder](https://github.com/ThomasHenley/node-iphone-finder). Thanks!
 
 ### Installation
 
