@@ -38,23 +38,40 @@ var fmip = {
             }
         };
         var hostRequest = https.request(opts, function (response) {
-            opts.host = response.headers['x-apple-mme-host'];
-            var deviceRequest = https.request(opts, function (response) {
-                var result = {headers: response.headers, body: ''};
-                response.on('data', function (chunk) {
-                    result.body = result.body + chunk;
+            var host = response.headers['x-apple-mme-host'];
+            if (host) {
+                opts.host = host;
+                var deviceRequest = https.request(opts, function (response) {
+                    var result = {headers: response.headers, body: ''};
+                    response.on('data', function (chunk) {
+                        result.body = result.body + chunk;
+                    });
+                    response.on('end', function () {
+                        try {
+                            var data = JSON.parse(result.body);
+                            return callback(null, data);
+                        }
+                        catch (error) {
+                            error.type = "DATA";
+                            error.originalMessage = error.message;
+                            error.message = "iCloud data error from [" + host + "]: \"" + result.body + "\"";
+                            return callback(error);
+                        }
+                    });
                 });
-                response.on('end', function () {
-                    return callback(null, JSON.parse(result.body));
+                deviceRequest.on('error', function (error) {
+                    error.originalMessage = error.message;
+                    error.type = "AUTH";
+                    error.message = "iCloud service error [" + apple_id + "]";
+                    return callback(error);
                 });
-            });
-            deviceRequest.on('error', function (error) {
-                error.originalMessage = error.message;
-                error.type = "AUTH";
-                error.message = "iCloud service error [" + apple_id + "]";
+                deviceRequest.end();
+            } else {
+                var error = new Error();
+                error.type = "HOST";
+                error.message = "iCloud host error [" + apple_id + "]";
                 return callback(error);
-            });
-            deviceRequest.end();
+            }
         });
         hostRequest.on('error', function (error) {
             error.originalMessage = error.message;
