@@ -11,10 +11,10 @@ var fmip = {
                 if (found) {
                     return callback(null, found);
                 } else {
-                    var error = new Error();
-                    error.type = "NOTFOUND";
-                    error.message = "iCloud device [" + device + "] not found!";
-                    return callback(error);
+                    var err = new Error();
+                    err.type = "NOTFOUND";
+                    err.message = "iCloud device [" + device + "] not found!";
+                    return callback(err);
                 }
             }
         });
@@ -37,40 +37,56 @@ var fmip = {
                 Authorization: 'Basic ' + new Buffer(apple_id + ':' + password).toString('base64')
             }
         };
+        var err = null;
         var hostRequest = https.request(opts, function (response) {
-            var host = response.headers['x-apple-mme-host'];
-            if (host) {
-                opts.host = host;
-                var deviceRequest = https.request(opts, function (response) {
-                    var result = {headers: response.headers, body: ''};
-                    response.on('data', function (chunk) {
-                        result.body = result.body + chunk;
-                    });
-                    response.on('end', function () {
-                        try {
-                            var data = JSON.parse(result.body);
-                            return callback(null, data);
+            if (response.statusCode < 400) {
+                var host = response.headers['x-apple-mme-host'];
+                if (host) {
+                    opts.host = host;
+                    var deviceRequest = https.request(opts, function (response) {
+                        if (response.statusCode === 200) {
+                            var result = {headers: response.headers, body: ''};
+                            response.on('data', function (chunk) {
+                                result.body = result.body + chunk;
+                            });
+                            response.on('end', function () {
+                                try {
+                                    var data = JSON.parse(result.body);
+                                    return callback(null, data);
+                                }
+                                catch (error) {
+                                    error.type = "DATA";
+                                    error.originalMessage = error.message;
+                                    error.message = "iCloud data error from host [" + host + "]";
+                                    if (result.body) error.message += ": \"" + result.body + "\"";
+                                    return callback(error);
+                                }
+                            });
+                        } else {
+                            err = new Error();
+                            if (response.statusCode === 401) { err.type = "AUTH" } else { err.type = "DATA" }
+                            err.message = "iCloud data error " + response.statusCode + " for [" + apple_id + "]: " + response.statusMessage;
+                            return callback(err);
                         }
-                        catch (error) {
-                            error.type = "DATA";
-                            error.originalMessage = error.message;
-                            error.message = "iCloud data error from [" + host + "]: \"" + result.body + "\"";
-                            return callback(error);
-                        }
                     });
-                });
-                deviceRequest.on('error', function (error) {
-                    error.originalMessage = error.message;
-                    error.type = "AUTH";
-                    error.message = "iCloud service error [" + apple_id + "]";
-                    return callback(error);
-                });
-                deviceRequest.end();
+                    deviceRequest.on('error', function (error) {
+                        error.originalMessage = error.message;
+                        error.type = "DATA";
+                        error.message = "iCloud service error [" + apple_id + "]";
+                        return callback(error);
+                    });
+                    deviceRequest.end();
+                } else {
+                    err = new Error();
+                    err.type = "HOST";
+                    err.message = "iCloud host error [" + apple_id + "]";
+                    return callback(err);
+                }
             } else {
-                var error = new Error();
-                error.type = "HOST";
-                error.message = "iCloud host error [" + apple_id + "]";
-                return callback(error);
+                err = new Error();
+                if (response.statusCode === 401) { err.type = "AUTH" } else { err.type = "HOST" }
+                err.message = "iCloud host error " + response.statusCode + " for ID [" + apple_id + "]: " + response.statusMessage;
+                return callback(err);
             }
         });
         hostRequest.on('error', function (error) {
