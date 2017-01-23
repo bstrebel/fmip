@@ -6,13 +6,14 @@ As of Rev. 3.0.0 _fmip_ is just a [pimatic-phone](https://www.npmjs.com/package/
 [find-my-phone](https://github.com/matt-kruse/find-my-iphone). It's just work-a-round for the old API call which seams to be
 no longer supported with the beginning of 2017.
 
-Limitations:
+**Limitations**
 
 - Generates Apple alert emails on login
 - Two factor authentication not supported
 - Only one session for one account supported
 
-Further investigation required!
+Further investigation required. A reworked library supporting multiple accounts
+and Two Factor Authentication is in progress.
 
 ~~Based on [Thomas Henley's iphone-finder](https://github.com/ThomasHenley/node-iphone-finder). Thanks!~~
 
