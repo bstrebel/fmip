@@ -1,6 +1,6 @@
 {
   "name": "fmip",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Get iCloud device info",
   "main": "index.js",
   "author": "Bernd Strebel <b.strebel@digitec> (http://github.com/bstrebel)",
