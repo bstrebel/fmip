@@ -1,6 +1,9 @@
 ## fmip: find my iphone
 
-Get location information (and more) from an iCloud device!
+**Deprecated**: Broken since January 2017 due to iCloud API changes. Replaced
+by [icloud-promise](https://www.npmjs.com/package/icloud-promise).
+
+~~Get location information (and more) from an iCloud device!~~
 
 As of Rev. 3.0.0 _fmip_ is just a [pimatic-phone](https://www.npmjs.com/package/pimatic-phone) compatible wrapper around
 [find-my-phone](https://github.com/matt-kruse/find-my-iphone). It's just work-a-round for the old API call which seams to be
